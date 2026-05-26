@@ -8,19 +8,16 @@ export const useHoneyStore = defineStore('honey', () => {
   const selectedCategory = ref('wszystko')
   const storePhoneNumber = ref('')
 
-  // Pobieranie produktów
   const fetchProducts = async () => {
     const { data } = await supabase.from('products').select('*').order('name')
     if (data) products.value = data
   }
 
-  // Pobieranie ustawień (numer telefonu)
   const fetchSettings = async () => {
     const { data } = await supabase.from('settings').select('phone_number').eq('id', 1).single()
     if (data) storePhoneNumber.value = data.phone_number
   }
 
-  // ---- FUNKCJE ADMINA ----
   const updatePhoneNumber = async (newPhone) => {
     await supabase.from('settings').update({ phone_number: newPhone }).eq('id', 1)
     storePhoneNumber.value = newPhone
@@ -36,33 +33,26 @@ export const useHoneyStore = defineStore('honey', () => {
     const { data, error } = await supabase.from('products').insert([productData]).select()
     if (!error && data) products.value.push(data[0])
   }
-  // ------------------------
 
   const filteredProducts = computed(() => {
-    // 1. Filtrowanie po kategorii
     let result = products.value
     if (selectedCategory.value !== 'wszystko') {
       result = products.value.filter((p) => p.category === selectedCategory.value)
     }
 
-    // 2. Tworzymy kopię i sortujemy
     return [...result].sort((a, b) => {
-      // Priorytet A: Dostępność (dostępne wyżej, niedostępne na dół)
       if (a.is_available !== b.is_available) {
         return a.is_available ? -1 : 1
       }
 
-      // Priorytet B: Kategoria (miody wyżej niż dary ula)
       if (a.category !== b.category) {
         return a.category === 'miody' ? -1 : 1
       }
 
-      // Priorytet C: Alfabetycznie po nazwie (żeby był porządek wewnątrz grup)
       return a.name.localeCompare(b.name, 'pl')
     })
   })
 
-  // Koszyk
   const getItemQuantity = (id) => {
     const item = cart.value.find((i) => i.id === id)
     return item ? item.quantity : 0

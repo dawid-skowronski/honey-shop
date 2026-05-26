@@ -154,17 +154,15 @@
 import { ref, onMounted } from 'vue'
 import { useHoneyStore } from '../stores/honeyStore'
 
-// Zmienne autoryzacji
 const isLogged = ref(false)
 const password = ref('')
 const error = ref(false)
 
-// TUTAJ ZMIENIASZ HASŁO DO PANELU
 const checkPassword = () => {
   if (password.value === 'pszczola123') {
     isLogged.value = true
     error.value = false
-    password.value = '' // czyścimy pole po wejściu
+    password.value = ''
   } else {
     error.value = true
   }

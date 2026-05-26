@@ -5,3 +5,9 @@
   --color-honey: #fdfbf0;
   --font-sans: 'Outfit', sans-serif;
 }
+
+html,
+body,
+#app {
+  touch-action: manipulation;
+}

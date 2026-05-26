@@ -177,7 +177,6 @@ import HoneyJar from '../components/HoneyJar.vue'
 const store = useHoneyStore()
 const isSummaryOpen = ref(false)
 
-// zaktualizowany dół pliku HomeView.vue
 onMounted(() => {
   store.fetchProducts()
   store.fetchSettings()
