@@ -34,21 +34,40 @@ export const useHoneyStore = defineStore('honey', () => {
     if (!error && data) products.value.push(data[0])
   }
 
+  const updateProduct = async (productData) => {
+    const { data, error } = await supabase
+      .from('products')
+      .update({
+        name: productData.name,
+        category: productData.category,
+        color_hex: productData.category === 'miody' ? productData.color_hex : null,
+        price: parseFloat(productData.price),
+      })
+      .eq('id', productData.id)
+      .select()
+
+    if (!error && data) {
+      const index = products.value.findIndex((p) => p.id === productData.id)
+      if (index !== -1) products.value[index] = data[0]
+    }
+  }
+
+  const deleteProduct = async (id) => {
+    const { error } = await supabase.from('products').delete().eq('id', id)
+    if (!error) {
+      products.value = products.value.filter((p) => p.id !== id)
+      cart.value = cart.value.filter((c) => c.id !== id)
+    }
+  }
+
   const filteredProducts = computed(() => {
     let result = products.value
     if (selectedCategory.value !== 'wszystko') {
       result = products.value.filter((p) => p.category === selectedCategory.value)
     }
-
     return [...result].sort((a, b) => {
-      if (a.is_available !== b.is_available) {
-        return a.is_available ? -1 : 1
-      }
-
-      if (a.category !== b.category) {
-        return a.category === 'miody' ? -1 : 1
-      }
-
+      if (a.is_available !== b.is_available) return a.is_available ? -1 : 1
+      if (a.category !== b.category) return a.category === 'miody' ? -1 : 1
       return a.name.localeCompare(b.name, 'pl')
     })
   })
@@ -98,6 +117,8 @@ export const useHoneyStore = defineStore('honey', () => {
     updatePhoneNumber,
     toggleAvailability,
     addProduct,
+    updateProduct,
+    deleteProduct,
     filteredProducts,
     getItemQuantity,
     addToCart,

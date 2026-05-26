@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6 md:p-12 text-gray-800 font-sans">
+  <div class="min-h-screen bg-gray-50 p-4 md:p-12 text-gray-800 font-sans pb-24">
     <div
       v-if="!isLogged"
       class="max-w-md mx-auto bg-white p-8 rounded-[2.5rem] shadow-sm text-center mt-10 md:mt-20 border border-amber-100/50"
@@ -70,36 +70,113 @@
       </div>
 
       <div class="bg-white p-6 rounded-3xl shadow-sm mb-8 border border-gray-100">
-        <h2 class="text-xl font-bold mb-4">Stan magazynowy</h2>
+        <h2 class="text-xl font-bold mb-4">Stan magazynowy oferty</h2>
         <div class="flex flex-col gap-3">
           <div
             v-for="product in store.products"
             :key="product.id"
-            class="flex justify-between items-center p-4 border-2 border-gray-50 rounded-2xl transition-colors"
+            class="flex flex-col p-4 border-2 border-gray-50 rounded-2xl transition-colors"
             :class="{ 'bg-red-50 border-red-100': !product.is_available }"
           >
-            <span
-              class="font-bold text-base md:text-lg"
-              :class="{ 'text-red-900': !product.is_available }"
-              >{{ product.name }}</span
+            <div
+              v-if="editingId !== product.id"
+              class="flex justify-between items-center w-full gap-2"
             >
-            <button
-              @click="store.toggleAvailability(product)"
-              class="px-4 py-2 md:px-5 md:py-2.5 rounded-xl font-black transition-transform active:scale-95 text-sm md:text-base whitespace-nowrap ml-2"
-              :class="
-                product.is_available
-                  ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                  : 'bg-green-500 text-white hover:bg-green-600'
-              "
+              <div class="flex flex-col">
+                <span
+                  class="font-bold text-base md:text-lg"
+                  :class="{ 'text-red-900': !product.is_available }"
+                  >{{ product.name }}</span
+                >
+                <span class="text-sm text-gray-500 font-bold"
+                  >{{ product.price }} zł | {{ product.category }}</span
+                >
+              </div>
+
+              <div class="flex items-center gap-1.5 md:gap-2">
+                <button
+                  @click="startEditing(product)"
+                  class="w-10 h-10 flex items-center justify-center bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-xl transition-colors active:scale-90"
+                  title="Edytuj"
+                >
+                  ✏️
+                </button>
+                <button
+                  @click="removeProduct(product.id)"
+                  class="w-10 h-10 flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-600 rounded-xl transition-colors active:scale-90"
+                  title="Usuń"
+                >
+                  🗑️
+                </button>
+
+                <button
+                  @click="store.toggleAvailability(product)"
+                  class="w-28 px-2 py-2.5 rounded-xl font-black transition-transform active:scale-95 text-xs md:text-sm"
+                  :class="
+                    product.is_available
+                      ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                      : 'bg-green-500 text-white hover:bg-green-600'
+                  "
+                >
+                  {{ product.is_available ? 'Zgłoś brak' : 'Przywróć' }}
+                </button>
+              </div>
+            </div>
+
+            <div
+              v-else
+              class="flex flex-col gap-3 w-full bg-amber-50/70 p-3 rounded-xl mt-1 border border-amber-200"
             >
-              {{ product.is_available ? 'Zgłoś brak' : 'Przywróć' }}
-            </button>
+              <input
+                v-model="editForm.name"
+                class="p-3 rounded-xl border border-amber-200 font-bold outline-none focus:border-amber-400"
+                placeholder="Nazwa produktu"
+              />
+
+              <div class="flex gap-2">
+                <input
+                  v-model="editForm.price"
+                  type="number"
+                  step="1"
+                  class="p-3 rounded-xl border border-amber-200 font-bold outline-none focus:border-amber-400 w-24 text-center"
+                  placeholder="Cena"
+                />
+                <select
+                  v-model="editForm.category"
+                  class="p-3 rounded-xl border border-amber-200 font-bold outline-none focus:border-amber-400 flex-1 bg-white"
+                >
+                  <option value="miody">Miód</option>
+                  <option value="dary ula">Dary ula</option>
+                </select>
+                <input
+                  v-if="editForm.category === 'miody'"
+                  type="color"
+                  v-model="editForm.color_hex"
+                  class="w-12 h-12 rounded-xl cursor-pointer p-0 border-0"
+                />
+              </div>
+
+              <div class="flex gap-2 justify-end mt-1">
+                <button
+                  @click="cancelEditing"
+                  class="px-5 py-2.5 bg-white border-2 border-gray-200 hover:bg-gray-100 text-gray-700 rounded-xl font-bold transition-colors active:scale-95"
+                >
+                  Anuluj
+                </button>
+                <button
+                  @click="saveEditing"
+                  class="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl font-black transition-transform active:scale-95 shadow-md shadow-green-500/20"
+                >
+                  Zapisz zmiany
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="bg-amber-100/50 p-6 rounded-3xl shadow-sm border border-amber-200/50">
-        <h2 class="text-xl font-bold mb-4">Dodaj nowy do oferty</h2>
+        <h2 class="text-xl font-bold mb-4">Dodaj nowy produkt do oferty</h2>
         <form @submit.prevent="submitNewProduct" class="flex flex-col gap-4">
           <input
             v-model="newProd.name"
@@ -170,6 +247,33 @@ const checkPassword = () => {
 
 const store = useHoneyStore()
 const phoneInput = ref('')
+
+const editingId = ref(null)
+const editForm = ref({})
+
+const startEditing = (product) => {
+  editingId.value = product.id
+  editForm.value = { ...product }
+}
+
+const cancelEditing = () => {
+  editingId.value = null
+  editForm.value = {}
+}
+
+const saveEditing = async () => {
+  if (!editForm.value.name || !editForm.value.price) return
+  await store.updateProduct(editForm.value)
+  editingId.value = null
+}
+
+const removeProduct = async (id) => {
+  if (
+    confirm('⚠️ Na pewno chcesz trwale usunąć ten produkt ze sklepu? Tej akcji nie da się cofnąć!')
+  ) {
+    await store.deleteProduct(id)
+  }
+}
 
 const newProd = ref({
   name: '',
