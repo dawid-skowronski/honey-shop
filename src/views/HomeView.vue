@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-amber-50/40 text-gray-800 font-sans pb-36">
+  <div class="min-h-screen bg-amber-50/40 text-gray-800 font-sans pb-18">
     <header class="bg-amber-100/60 pt-12 pb-10 text-center shadow-sm mb-8 rounded-b-[3rem]">
       <h1 class="text-4xl md:text-5xl font-black text-amber-700 mb-2 tracking-tight">
         Pasieka Bobińscy
