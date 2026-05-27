@@ -166,6 +166,15 @@
         </button>
       </div>
     </div>
+    <div class="mt-16 mb-8 text-center flex flex-col items-center gap-2">
+      <router-link
+        to="/o-nas"
+        class="text-gray-400 font-bold hover:text-amber-600 transition-colors underline underline-offset-4"
+      >
+        O naszej pasiece
+      </router-link>
+      <p class="text-xs font-bold text-gray-300">© 2026 Pasieka Bobińskich</p>
+    </div>
   </div>
 </template>
 
