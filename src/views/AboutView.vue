@@ -6,7 +6,7 @@
       <router-link to="/" class="text-amber-600 font-bold hover:text-amber-700 transition-colors"
         >← Powrót do sklepu</router-link
       >
-      <h1 class="text-4xl md:text-5xl font-black text-gray-900 mt-8 mb-6">Pasieka Bobińskich</h1>
+      <h1 class="text-4xl md:text-5xl font-black text-gray-900 mt-8 mb-6">Pasieka Bobińscy</h1>
 
       <div class="prose prose-amber prose-lg font-medium text-gray-600 leading-relaxed">
         <p>
@@ -16,7 +16,7 @@
         </p>
 
         <p>
-          <strong>Pasieka Bobińskich</strong> to nie tylko produkcja miodu - to przede wszystkim
+          <strong>Pasieka Bobińscy</strong> to nie tylko produkcja miodu - to przede wszystkim
           szacunek do natury i tradycyjne metody pszczelarskie, które przekazujemy z pokolenia na
           pokolenie. Nasze pszczoły mają dostęp do różnorodnych pożytków, co sprawia, że każdy słoik
           miodu, który od nas otrzymujesz, jest wyjątkowy.
